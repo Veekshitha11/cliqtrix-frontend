@@ -27,6 +27,15 @@ function initializeApp() {
   setupEventListeners();
   loadInitialData();
   updatePlanDate();
+  autoOpenTabFromURL();
+}
+function autoOpenTabFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+
+  if (tab) {
+    switchTab(tab);
+  }
 }
 
 // ============================================
@@ -499,3 +508,4 @@ function showToast(message, type = 'success') {
     toast.classList.add('hidden');
   }, 3000);
 }
+
