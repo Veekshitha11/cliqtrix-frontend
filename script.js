@@ -3,7 +3,7 @@
 // ============================================
 
 // Configuration
-const API_BASE_URL = "https://cliqtrix-backend.onrender.com";
+const API_BASE_URL = "https://cliqtrix-backend.onrender.com/api";
 
 // State Management
 const state = {
@@ -34,35 +34,29 @@ function initializeApp() {
 // ============================================
 
 function setupEventListeners() {
-  // Tab navigation
   const tabButtons = document.querySelectorAll('.tab-btn');
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
-  
-  // Theme toggle
+
   const themeToggle = document.getElementById('theme-toggle');
   themeToggle.addEventListener('click', toggleTheme);
-  
-  // Refresh button
+
   const refreshBtn = document.getElementById('refresh-btn');
   refreshBtn.addEventListener('click', refreshAllData);
-  
-  // CRM search
+
   const crmSearch = document.getElementById('crm-search');
   crmSearch.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       searchCRM(e.target.value);
     }
   });
-  
-  // Task filter
+
   const taskFilter = document.getElementById('task-filter');
   taskFilter.addEventListener('change', (e) => {
     filterTasks(e.target.value);
   });
-  
-  // CRM refresh
+
   const refreshCRM = document.getElementById('refresh-crm');
   refreshCRM.addEventListener('click', () => {
     const email = document.getElementById('crm-search').value;
@@ -76,24 +70,17 @@ function setupEventListeners() {
 
 function switchTab(tabName) {
   state.currentTab = tabName;
-  
-  // Update tab buttons
+
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tab === tabName);
   });
-  
-  // Update panels
+
   document.querySelectorAll('.panel').forEach(panel => {
     panel.classList.toggle('active', panel.id === `${tabName}-panel`);
   });
-  
-  // Load data for specific tabs
-  if (tabName === 'plan' && !state.dailyPlan) {
-    loadDailyPlan();
-  }
-  if (tabName === 'debt' && !state.timeDebt) {
-    loadTimeDebt();
-  }
+
+  if (tabName === 'plan' && !state.dailyPlan) loadDailyPlan();
+  if (tabName === 'debt' && !state.timeDebt) loadTimeDebt();
 }
 
 // ============================================
@@ -103,13 +90,13 @@ function switchTab(tabName) {
 function toggleTheme() {
   state.isDarkMode = !state.isDarkMode;
   document.body.classList.toggle('light-mode', !state.isDarkMode);
-  
+
   const sunIcon = document.querySelector('.sun-icon');
   const moonIcon = document.querySelector('.moon-icon');
-  
+
   sunIcon.classList.toggle('hidden', !state.isDarkMode);
   moonIcon.classList.toggle('hidden', state.isDarkMode);
-  
+
   showToast(state.isDarkMode ? 'Dark mode enabled' : 'Light mode enabled');
 }
 
@@ -126,13 +113,13 @@ async function refreshAllData() {
   showToast('Refreshing data...');
   const refreshIcon = document.querySelector('#refresh-btn svg');
   refreshIcon.style.animation = 'spin 1s linear infinite';
-  
+
   await Promise.all([
     loadTasks(),
     state.currentTab === 'plan' ? loadDailyPlan() : Promise.resolve(),
     state.currentTab === 'debt' ? loadTimeDebt() : Promise.resolve()
   ]);
-  
+
   refreshIcon.style.animation = '';
   showToast('Data refreshed successfully!');
 }
@@ -145,7 +132,7 @@ async function loadTasks() {
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`);
     const data = await response.json();
-    
+
     if (data.success) {
       state.tasks = data.tasks;
       renderTasks();
@@ -159,7 +146,7 @@ async function loadTasks() {
 
 function renderTasks() {
   const tasksList = document.getElementById('tasks-list');
-  
+
   if (state.tasks.length === 0) {
     tasksList.innerHTML = `
       <div class="empty-state">
@@ -172,7 +159,7 @@ function renderTasks() {
     `;
     return;
   }
-  
+
   tasksList.innerHTML = state.tasks.map(task => `
     <div class="task-card" data-id="${task.id}">
       <div class="task-header">
@@ -196,15 +183,11 @@ function renderTasks() {
 
 function filterTasks(priority) {
   const allTasks = document.querySelectorAll('.task-card');
-  
+
   allTasks.forEach(card => {
     const taskPriority = card.querySelector('.priority-badge').textContent.toLowerCase();
-    
-    if (priority === 'all' || taskPriority === priority) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
+
+    card.style.display = (priority === 'all' || taskPriority === priority) ? 'block' : 'none';
   });
 }
 
@@ -215,7 +198,7 @@ function filterTasks(priority) {
 function renderInbox() {
   const inboxList = document.getElementById('inbox-list');
   const pendingTasks = state.tasks.filter(t => t.status === 'pending');
-  
+
   if (pendingTasks.length === 0) {
     inboxList.innerHTML = `
       <div class="empty-state">
@@ -228,7 +211,7 @@ function renderInbox() {
     `;
     return;
   }
-  
+
   inboxList.innerHTML = pendingTasks.map(task => `
     <div class="inbox-item" data-id="${task.id}">
       <div class="inbox-icon">
@@ -261,18 +244,18 @@ function updateInboxCount() {
 
 async function searchCRM(email) {
   const crmContent = document.getElementById('crm-content');
-  
+
   crmContent.innerHTML = `
     <div class="loading-state">
       <div class="loader"></div>
       <p>Searching for ${email}...</p>
     </div>
   `;
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/crm/${encodeURIComponent(email)}`);
     const data = await response.json();
-    
+
     if (data.success) {
       renderCRMContact(data.contact);
     } else {
@@ -294,7 +277,7 @@ async function searchCRM(email) {
 
 function renderCRMContact(contact) {
   const crmContent = document.getElementById('crm-content');
-  
+
   crmContent.innerHTML = `
     <div class="crm-card">
       <div class="crm-header">
@@ -306,7 +289,7 @@ function renderCRMContact(contact) {
           <p class="crm-email">${contact.email}</p>
         </div>
       </div>
-      
+
       <div class="crm-details">
         <div class="crm-detail-item">
           <span class="detail-label">Company</span>
@@ -341,11 +324,11 @@ function renderCRMContact(contact) {
 
 async function loadDailyPlan() {
   const planContent = document.getElementById('plan-content');
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/ai/plan-day`);
     const data = await response.json();
-    
+
     if (data.success) {
       state.dailyPlan = data.plan;
       renderDailyPlan(data.plan);
@@ -362,7 +345,7 @@ async function loadDailyPlan() {
 
 function renderDailyPlan(plan) {
   const planContent = document.getElementById('plan-content');
-  
+
   planContent.innerHTML = `
     <div class="plan-summary">
       <div class="plan-stat">
@@ -374,7 +357,7 @@ function renderDailyPlan(plan) {
         <span class="stat-label">Total Time</span>
       </div>
     </div>
-    
+
     <div class="plan-recommendation">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
@@ -382,7 +365,7 @@ function renderDailyPlan(plan) {
       </svg>
       <p>${plan.recommendation}</p>
     </div>
-    
+
     <div class="plan-schedule">
       ${plan.schedule.map(item => `
         <div class="schedule-item">
@@ -404,11 +387,11 @@ function renderDailyPlan(plan) {
 
 async function loadTimeDebt() {
   const debtContent = document.getElementById('debt-content');
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/ai/time-debt`);
     const data = await response.json();
-    
+
     if (data.success) {
       state.timeDebt = data.timeDebt;
       renderTimeDebt(data.timeDebt);
@@ -425,9 +408,9 @@ async function loadTimeDebt() {
 
 function renderTimeDebt(debt) {
   const debtContent = document.getElementById('debt-content');
-  
+
   const scoreColor = debt.score >= 80 ? 'success' : debt.score >= 60 ? 'warning' : 'danger';
-  
+
   debtContent.innerHTML = `
     <div class="debt-score-container">
       <div class="debt-gauge">
@@ -440,7 +423,7 @@ function renderTimeDebt(debt) {
           <span class="score-status">${debt.status}</span>
         </div>
       </div>
-      
+
       <div class="debt-stats">
         <div class="debt-stat">
           <span class="stat-label">Pending Tasks</span>
@@ -452,12 +435,12 @@ function renderTimeDebt(debt) {
         </div>
       </div>
     </div>
-    
+
     <div class="debt-recommendation">
       <h4>Recommendation</h4>
       <p>${debt.recommendation}</p>
     </div>
-    
+
     <div class="debt-breakdown">
       <h4>Task Breakdown</h4>
       <div class="breakdown-list">
@@ -486,34 +469,33 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   const now = new Date();
   const diff = Math.floor((date - now) / (1000 * 60 * 60 * 24));
-  
+
   if (diff === 0) return 'Today';
   if (diff === 1) return 'Tomorrow';
   if (diff === -1) return 'Yesterday';
   if (diff < 0) return `${Math.abs(diff)} days ago`;
-  
+
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function updatePlanDate() {
   const planDate = document.getElementById('plan-date');
   const today = new Date();
-  planDate.textContent = today.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    month: 'long', 
-    day: 'numeric' 
+  planDate.textContent = today.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
   });
 }
 
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
   const toastMessage = document.getElementById('toast-message');
-  
+
   toastMessage.textContent = message;
   toast.classList.remove('hidden');
-  
+
   setTimeout(() => {
     toast.classList.add('hidden');
   }, 3000);
-
 }
