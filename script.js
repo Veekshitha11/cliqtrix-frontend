@@ -3,7 +3,7 @@
 // ============================================
 
 // Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = "https://cliqtrix-backend.onrender.com";
 
 // State Management
 const state = {
@@ -515,4 +515,5 @@ function showToast(message, type = 'success') {
   setTimeout(() => {
     toast.classList.add('hidden');
   }, 3000);
+
 }
