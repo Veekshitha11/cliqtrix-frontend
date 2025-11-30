@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow AI - Productivity Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <!-- Animated Background Blobs -->
+  <div class="blob-container">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Main Widget Container -->
+  <div class="widget-container">
+    
+    <!-- Header -->
+    <header class="widget-header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <h1 class="logo-text">TaskFlow AI</h1>
+        </div>
+        
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 2V4M12 20V22M4 12H2M22 12H20M19.07 4.93L17.66 6.34M6.34 17.66L4.93 19.07M19.07 19.07L17.66 17.66M6.34 6.34L4.93 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          
+          <button class="icon-btn" id="refresh-btn" aria-label="Refresh data">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12A9 9 0 0011 3V1L7 5L11 9V7A7 7 0 1118.3 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="inbox">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 7L12 13L21 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Inbox</span>
+      </button>
+      
+      <button class="tab-btn" data-tab="tasks">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span>Tasks</span>
+      </button>
+      
+      <button class="tab-btn" data-tab="crm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M6 21V19C6 16.79 7.79 15 10 15H14C16.21 15 18 16.79 18 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>CRM</span>
+      </button>
+      
+      <button class="tab-btn" data-tab="plan">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 2V6M16 2V6M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Plan</span>
+      </button>
+      
+      <button class="tab-btn" data-tab="debt">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Time Debt</span>
+      </button>
+    </nav>
+
+    <!-- Content Panels -->
+    <main class="content-area">
+      
+      <!-- Inbox Panel -->
+      <div class="panel active" id="inbox-panel">
+        <div class="panel-header">
+          <h2>Email Inbox</h2>
+          <span class="badge" id="inbox-count">0</span>
+        </div>
+        
+        <div class="inbox-list" id="inbox-list">
+          <div class="loading-state">
+            <div class="loader"></div>
+            <p>Loading emails...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Panel -->
+      <div class="panel" id="tasks-panel">
+        <div class="panel-header">
+          <h2>My Tasks</h2>
+          <div class="filter-group">
+            <select class="filter-select" id="task-filter">
+              <option value="all">All Tasks</option>
+              <option value="high">High Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="tasks-list" id="tasks-list">
+          <div class="loading-state">
+            <div class="loader"></div>
+            <p>Loading tasks...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM Panel -->
+      <div class="panel" id="crm-panel">
+        <div class="panel-header">
+          <h2>CRM Contacts</h2>
+          <button class="btn-secondary" id="refresh-crm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12A9 9 0 0011 3V1L7 5L11 9V7A7 7 0 1118.3 14" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+        
+        <div class="search-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input type="email" id="crm-search" placeholder="Search by email..." />
+        </div>
+        
+        <div class="crm-content" id="crm-content">
+          <div class="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M6 21V19C6 16.79 7.79 15 10 15H14C16.21 15 18 16.79 18 19V21" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <p>Enter an email to view contact details</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan My Day Panel -->
+      <div class="panel" id="plan-panel">
+        <div class="panel-header">
+          <h2>Plan My Day</h2>
+          <span class="date-badge" id="plan-date"></span>
+        </div>
+        
+        <div class="plan-content" id="plan-content">
+          <div class="loading-state">
+            <div class="loader"></div>
+            <p>Generating your daily plan...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Debt Panel -->
+      <div class="panel" id="debt-panel">
+        <div class="panel-header">
+          <h2>Time Debt Score</h2>
+        </div>
+        
+        <div class="debt-content" id="debt-content">
+          <div class="loading-state">
+            <div class="loader"></div>
+            <p>Calculating time debt...</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="widget-footer">
+      <p>Powered by TaskFlow AI • Cliqtrix'25</p>
+    </footer>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast hidden" id="toast">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+    </svg>
+    <span id="toast-message">Notification</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
